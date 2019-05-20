@@ -134,16 +134,31 @@ public class PizzaJdbcDao implements IPizzaDao {
 	public void updatePizza(String codePizza, Pizza pizza) {
 		
 		connecter() ;
+		System.out.println(pizza.id);
+		//findPizzaByCode(codePizza);
 		
-		PreparedStatement updatePizzaSt;
 		try {
-			updatePizzaSt = (PreparedStatement) connection.prepareStatement("UPDATE pizzas WHERE CODE=codePizza");
-			updatePizzaSt.setInt(1,pizza.id);
-			updatePizzaSt.setString(2, pizza.code);
-			updatePizzaSt.setString(3, pizza.libelle);
-			updatePizzaSt.setDouble(4, pizza.prix);
-			updatePizzaSt.executeUpdate();
+			PreparedStatement updatePizzaSt = (PreparedStatement) connection.prepareStatement
+					("UPDATE pizzas SET   CODE = ? , LIBELLE = ? , PRIX = ? , CATEGORIE = ? WHERE CODE = ?");
+			//updatePizzaSt.setInt(1,pizza.id);
+			updatePizzaSt.setString(1, pizza.code);
+			updatePizzaSt.setString(2, pizza.libelle);
+			updatePizzaSt.setDouble(3, pizza.prix);
 			
+			
+			if (pizza.getCat().equals("Viande")) {
+				updatePizzaSt.setString(4, "Viande");
+				
+			} else if (pizza.getCat().equals("Sans Viande")) {
+				updatePizzaSt.setString(4, "Sans Viande");
+				
+			} else if (pizza.getCat().equals("Poisson")) {
+				updatePizzaSt.setString(4, "Viande");
+				
+			} 
+			updatePizzaSt.setString(5, codePizza);
+			
+			updatePizzaSt.executeUpdate();
 			updatePizzaSt.close();
 		
 		} catch (SQLException e) {
@@ -160,7 +175,7 @@ public class PizzaJdbcDao implements IPizzaDao {
 		
 		PreparedStatement deletePizzaSt;
 		try {
-			deletePizzaSt = (PreparedStatement) connection.prepareStatement("DELETE FROM pizzas WHERE CODE = codePizza");
+			deletePizzaSt = (PreparedStatement) connection.prepareStatement("DELETE FROM pizzas WHERE CODE = ");
 			deletePizzaSt.executeUpdate();
 			
 			deletePizzaSt.close();
@@ -204,6 +219,6 @@ public class PizzaJdbcDao implements IPizzaDao {
 	public boolean pizzaExists(String codePizza) {
 		
 		
-		return false ;
+		return true ;
 	} 
 }

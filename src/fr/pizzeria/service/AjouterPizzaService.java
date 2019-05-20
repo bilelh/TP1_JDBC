@@ -10,7 +10,7 @@ public class AjouterPizzaService extends MenuService {
 	Scanner questionUser = new Scanner(System.in);
 
 	@Override
-	public void executeUC(PizzaJdbcDao pizzaDao) throws SavePizzaException {
+	public void executeUC(IPizzaDao pizzaDao) throws SavePizzaException {
 		// TODO Auto-generated method stub
 		
 		System.out.println("Ajout d'une nouvelle pizza  ");
