@@ -17,7 +17,7 @@ public class Pizza {
 	public CategoriePizza cat;
 	
 		// AJOUT DE LA CATEGORIE DE PIZZA DANS LE CONSTRUCTEUR
-	public Pizza (String code , String libelle , double prix /*, CategoriePizza cat*/) {
+	public Pizza (String code , String libelle , double prix , CategoriePizza cat) {
 		this.id = id_pizza++ ;
 		this.code = code ;
 		this.libelle = libelle ;
@@ -26,7 +26,7 @@ public class Pizza {
 	}
 	
 		// AJOUT DE LA CATEGORIE DE PIZZA DANS LE CONSTRUCTEUR
-	public Pizza (int id , String code , String libelle , double prix /*, CategoriePizza cat*/) {
+	public Pizza (int id , String code , String libelle , double prix , CategoriePizza cat) {
 		this.id = id ;
 		if (id > id_pizza) {
 			id_pizza = id;

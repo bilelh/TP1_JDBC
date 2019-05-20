@@ -17,8 +17,7 @@ import fr.pizzeria.model.Pizza;
 
 public class PizzaJdbcDao implements IPizzaDao {
 	
-Scanner questionUser = new Scanner(System.in);
-	
+	Scanner questionUser = new Scanner(System.in);
 	
 	Connection connection ;
 	
@@ -51,22 +50,35 @@ Scanner questionUser = new Scanner(System.in);
 	public List <Pizza> findAllPizzas() {
 		
 		connecter() ;
-		 List <Pizza> listPizza = new ArrayList ();
+		
+		List <Pizza> listPizza = new ArrayList ();
 		
 		try {
 			PreparedStatement selectPizzaSt = (PreparedStatement) connection.prepareStatement("SELECT * FROM pizzas");
 			
 			ResultSet resultats = selectPizzaSt.executeQuery();
-			
+			Pizza pizza = null ;
 		
 			while (resultats.next()) {
 				int id = resultats.getInt("ID");
 				String code = resultats.getString("CODE") ;
 				String libelle = resultats.getString("LIBELLE") ;
 				double prix = resultats.getDouble("PRIX") ;
-
-				Pizza pizza = new Pizza(id, code , libelle , prix );
+				String categorie = resultats.getString("CATEGORIE") ;
+				
+				
+				if (categorie.equals("Viande")) {
+					pizza = new Pizza(id, code , libelle , prix , CategoriePizza.VIANDE);
+					
+				} else if (categorie.equals("Sans Viand")) {
+					pizza = new Pizza(id, code , libelle , prix , CategoriePizza.SANS_VIANDE);
+					
+				} else if (categorie.equals("Poisson")) {
+					pizza = new Pizza(id, code , libelle , prix , CategoriePizza.POISSON);
+					
+				} 
 				listPizza.add(pizza);
+				
 			}
 			
 			resultats.close();
@@ -163,7 +175,7 @@ Scanner questionUser = new Scanner(System.in);
 			String libelle = resultats.getString("LIBELLE") ;
 			double prix = resultats.getDouble("PRIX") ;
 
-			pizza = new Pizza(id, code , libelle , prix );
+			//pizza = new Pizza(id, code , libelle , prix );
 			
 			resultats.close();
 			selectPizzaSt.close();

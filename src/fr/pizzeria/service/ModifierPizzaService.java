@@ -71,7 +71,7 @@ public class ModifierPizzaService extends MenuService {
 		}	
 		
 			// MISE A JOUR DE LA PIZZA
-		Pizza newPizza = new Pizza (newCode , newLibelle , newPrix /*, newCat*/) ;
+		Pizza newPizza = new Pizza (newCode , newLibelle , newPrix , newCat) ;
 		pizzaDao.updatePizza(modif_code, newPizza);
 		
 	}

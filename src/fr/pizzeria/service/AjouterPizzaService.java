@@ -55,7 +55,7 @@ public class AjouterPizzaService extends MenuService {
 		}	
 		
 			// AJOUT DE LA NOUVELLE PIZZA
-		Pizza newPizza = new Pizza (newCode , newLibelle , newPrix/* , newCat */) ;
+		Pizza newPizza = new Pizza (newCode , newLibelle , newPrix , newCat ) ;
 		pizzaDao.saveNewPizza(newPizza);
 		
 	}
