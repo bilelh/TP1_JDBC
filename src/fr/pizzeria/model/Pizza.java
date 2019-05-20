@@ -18,24 +18,31 @@ public class Pizza {
 	
 		// AJOUT DE LA CATEGORIE DE PIZZA DANS LE CONSTRUCTEUR
 	public Pizza (String code , String libelle , double prix , CategoriePizza cat) {
-		this.id = id_pizza++ ;
+		this.id = id_pizza ;
+		id_pizza++ ;
 		this.code = code ;
 		this.libelle = libelle ;
 		this.prix = prix ;
 		this.cat = cat ;
+		
 	}
 	
 		// AJOUT DE LA CATEGORIE DE PIZZA DANS LE CONSTRUCTEUR
 	public Pizza (int id , String code , String libelle , double prix , CategoriePizza cat) {
 		this.id = id ;
 		if (id > id_pizza) {
-			id_pizza = id;
+			id_pizza = id+1;
 		}
 		this.code = code ;
 		this.libelle = libelle ;
 		this.prix = prix ;
 		this.cat = cat ;
 	}
+	
+	public String getCat() {
+		return cat.getCat();
+	}
+	
 	
 	//public String toString () {
 		

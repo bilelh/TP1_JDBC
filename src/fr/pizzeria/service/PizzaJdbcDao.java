@@ -70,7 +70,7 @@ public class PizzaJdbcDao implements IPizzaDao {
 				if (categorie.equals("Viande")) {
 					pizza = new Pizza(id, code , libelle , prix , CategoriePizza.VIANDE);
 					
-				} else if (categorie.equals("Sans Viand")) {
+				} else if (categorie.equals("Sans Viande")) {
 					pizza = new Pizza(id, code , libelle , prix , CategoriePizza.SANS_VIANDE);
 					
 				} else if (categorie.equals("Poisson")) {
@@ -100,13 +100,25 @@ public class PizzaJdbcDao implements IPizzaDao {
 		//listPizza.add(pizza) ;
 		connecter() ;
 		
-		PreparedStatement newPizzaSt;
+		
 		try {
-			newPizzaSt = (PreparedStatement) connection.prepareStatement("INSERT INTO pizzas");
+			PreparedStatement newPizzaSt = (PreparedStatement) connection.prepareStatement("INSERT INTO pizzas VALUES(? , ? , ? , ? , ?)");
 			newPizzaSt.setInt(1,pizza.id);
 			newPizzaSt.setString(2, pizza.code);
 			newPizzaSt.setString(3, pizza.libelle);
 			newPizzaSt.setDouble(4, pizza.prix);
+			
+			if (pizza.getCat().equals("Viande")) {
+				newPizzaSt.setString(5, "Viande");
+				
+			} else if (pizza.getCat().equals("Sans Viande")) {
+				newPizzaSt.setString(5, "Sans Viande");
+				
+			} else if (pizza.getCat().equals("Poisson")) {
+				newPizzaSt.setString(5, "Viande");
+				
+			} 
+			
 			newPizzaSt.executeUpdate();
 			
 			newPizzaSt.close();
