@@ -11,7 +11,7 @@ public class ModifierPizzaService extends MenuService {
 	Scanner questionUser = new Scanner(System.in);
 
 	@Override
-	public void executeUC(PizzaMemoDao pizzaDao) throws UpdatePizzaException {
+	public void executeUC(PizzaJdbcDao pizzaDao) throws UpdatePizzaException {
 		// TODO Auto-generated method stub
 		
 		System.out.println("Mise à jour d'une pizza  ");
@@ -71,7 +71,7 @@ public class ModifierPizzaService extends MenuService {
 		}	
 		
 			// MISE A JOUR DE LA PIZZA
-		Pizza newPizza = new Pizza (newCode , newLibelle , newPrix , newCat) ;
+		Pizza newPizza = new Pizza (newCode , newLibelle , newPrix /*, newCat*/) ;
 		pizzaDao.updatePizza(modif_code, newPizza);
 		
 	}

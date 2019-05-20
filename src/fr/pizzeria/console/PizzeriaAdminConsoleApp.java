@@ -10,6 +10,7 @@ import fr.pizzeria.service.AjouterPizzaService;
 import fr.pizzeria.service.ListerPizzaService;
 import fr.pizzeria.service.MenuService;
 import fr.pizzeria.service.ModifierPizzaService;
+import fr.pizzeria.service.PizzaJdbcDao;
 import fr.pizzeria.service.PizzaMemoDao;
 import fr.pizzeria.service.SupprimerPizzaService;
 
@@ -19,8 +20,9 @@ public class PizzeriaAdminConsoleApp {
 		// TODO Auto-generated method stub
 		
 							// INITIALISATION DE LA LISTE DE PIZZA
-		PizzaMemoDao pizza = new PizzaMemoDao() ;
-		pizza.initialisation();
+		PizzaJdbcDao pizza = new PizzaJdbcDao() ;
+		//pizza.initialisation();
+		pizza.findAllPizzas() ;
 		
 							// SCANNER QUI PERMET DE RECUPERER LA SAISIE CLAVIER
 		Scanner questionUser = new Scanner(System.in);

@@ -10,7 +10,7 @@ public class SupprimerPizzaService extends MenuService {
 	Scanner questionUser = new Scanner(System.in);
 
 	@Override
-	public void executeUC(PizzaMemoDao pizzaDao) throws DeletePizzaException {
+	public void executeUC(PizzaJdbcDao pizzaDao) throws DeletePizzaException {
 		// TODO Auto-generated method stub
 		
 		System.out.println("Suppression d'une pizza ");

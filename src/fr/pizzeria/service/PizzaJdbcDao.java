@@ -1,9 +1,17 @@
 package fr.pizzeria.service;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import com.mysql.jdbc.PreparedStatement;
+import com.mysql.jdbc.Statement;
+
+import fr.pizzeria.exception.PizzaException;
 import fr.pizzeria.model.CategoriePizza;
 import fr.pizzeria.model.Pizza;
 
@@ -11,109 +19,167 @@ public class PizzaJdbcDao implements IPizzaDao {
 	
 Scanner questionUser = new Scanner(System.in);
 	
-	public List listPizza = new ArrayList ();
 	
-	public void initialisation () {
-		
-		listPizza.add(new Pizza (0 ,"PEP" , "pépéroni" , 12.50 , CategoriePizza.VIANDE)) ;
-		listPizza.add(new Pizza (1 ,"MAR" , "Margherita" , 14.00 , CategoriePizza.SANS_VIANDE)) ;
-		listPizza.add(new Pizza (2 ,"REIN" , "La Reine" , 11.50 , CategoriePizza.VIANDE)) ;
-		listPizza.add(new Pizza (3 ,"FRC" , "La 4 Fromage" , 12.00 , CategoriePizza.SANS_VIANDE)) ;
-		listPizza.add(new Pizza (4 ,"CAN" , "La Cannibale" , 12.50 , CategoriePizza.VIANDE)) ;
-		listPizza.add(new Pizza (5 ,"SAV" , "La Savoyarde" , 13.00 , CategoriePizza.VIANDE)) ;
-		listPizza.add(new Pizza (6 ,"ORI" , "L'Orientale" , 13.50 , CategoriePizza.VIANDE)) ;
-		listPizza.add(new Pizza (7 ,"IND" , "L'Indienne" , 14.00 , CategoriePizza.VIANDE)) ; 
-		
+	Connection connection ;
+	
+	public void connecter() {
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+		} catch (ClassNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		try {
+			
+			connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/pizza" , "root" , "") ;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
 	}
 	
+	public void deconnecter() {
+		
+		try {
+			connection.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
 	public List <Pizza> findAllPizzas() {
+		
+		connecter() ;
+		 List <Pizza> listPizza = new ArrayList ();
+		
+		try {
+			PreparedStatement selectPizzaSt = (PreparedStatement) connection.prepareStatement("SELECT * FROM pizzas");
+			
+			ResultSet resultats = selectPizzaSt.executeQuery();
+			
+		
+			while (resultats.next()) {
+				int id = resultats.getInt("ID");
+				String code = resultats.getString("CODE") ;
+				String libelle = resultats.getString("LIBELLE") ;
+				double prix = resultats.getDouble("PRIX") ;
+
+				Pizza pizza = new Pizza(id, code , libelle , prix );
+				listPizza.add(pizza);
+			}
+			
+			resultats.close();
+			selectPizzaSt.close();
+		
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		deconnecter() ;
 		
 		return listPizza ;
 		
 	}
 	
 	public void saveNewPizza(Pizza pizza) {
+		//listPizza.add(pizza) ;
+		connecter() ;
 		
-		listPizza.add(pizza) ;
+		PreparedStatement newPizzaSt;
+		try {
+			newPizzaSt = (PreparedStatement) connection.prepareStatement("INSERT INTO pizzas");
+			newPizzaSt.setInt(1,pizza.id);
+			newPizzaSt.setString(2, pizza.code);
+			newPizzaSt.setString(3, pizza.libelle);
+			newPizzaSt.setDouble(4, pizza.prix);
+			newPizzaSt.executeUpdate();
+			
+			newPizzaSt.close();
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
+		deconnecter() ;
 	}
 	
 	public void updatePizza(String codePizza, Pizza pizza) {
 		
-		Pizza pizza_by_code ;
+		connecter() ;
 		
-		for ( int i = 0 ; i < listPizza.size() ; i++ ) {
-			pizza_by_code = (Pizza) listPizza.get(i) ;
-			if (pizza_by_code.code.compareTo(codePizza) == 0) {
-				listPizza.remove(listPizza.get(i)) ;
-			}
+		PreparedStatement updatePizzaSt;
+		try {
+			updatePizzaSt = (PreparedStatement) connection.prepareStatement("UPDATE pizzas WHERE CODE=codePizza");
+			updatePizzaSt.setInt(1,pizza.id);
+			updatePizzaSt.setString(2, pizza.code);
+			updatePizzaSt.setString(3, pizza.libelle);
+			updatePizzaSt.setDouble(4, pizza.prix);
+			updatePizzaSt.executeUpdate();
+			
+			updatePizzaSt.close();
+		
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+				
 		
-		listPizza.add(pizza) ;
+		deconnecter() ;
 		
 	}
 	
 	public void deletePizza(String codePizza) {
 		
-		Pizza pizza_by_code ;
-		
-		for ( int i = 0 ; i < listPizza.size() ; i++ ) {
+		PreparedStatement deletePizzaSt;
+		try {
+			deletePizzaSt = (PreparedStatement) connection.prepareStatement("DELETE FROM pizzas WHERE CODE = codePizza");
+			deletePizzaSt.executeUpdate();
 			
-			pizza_by_code = (Pizza) listPizza.get(i) ;
+			deletePizzaSt.close();
 			
-			if (pizza_by_code.code.compareTo(codePizza) == 0) {
-				
-				listPizza.remove(listPizza.get(i)) ;
-				
-			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+		
+		
 	}
 	
 	public Pizza findPizzaByCode(String codePizza) {
 		
-		int indice = 0 ;
-		Pizza pizza ;
+		Pizza pizza = null ;
 		
-		for ( int i = 0 ; i < listPizza.size() ; i++ ) {
+		try {
+			PreparedStatement selectPizzaSt = (PreparedStatement) connection.prepareStatement("SELECT * FROM pizzas WHERE CODE = codePizza");
+			ResultSet resultats = selectPizzaSt.executeQuery();
 			
-			pizza = (Pizza) listPizza.get(i) ;
 			
-			if (pizza.code.compareTo(codePizza) == 0) {
-				
-				indice = i ;
-				
-			}
+			int id = resultats.getInt("ID");
+			String code = resultats.getString("CODE") ;
+			String libelle = resultats.getString("LIBELLE") ;
+			double prix = resultats.getDouble("PRIX") ;
+
+			pizza = new Pizza(id, code , libelle , prix );
+			
+			resultats.close();
+			selectPizzaSt.close();
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
-		return (Pizza) listPizza.get(indice) ;
+		return pizza ;
 		
 	}
 	
 	public boolean pizzaExists(String codePizza) {
 		
-		Pizza pizza_by_code ;
-		boolean exist = false ;
-		int test = 0 ;
 		
-		for ( int i = 0 ; i < listPizza.size() ; i++ ) {
-			
-			pizza_by_code = (Pizza) listPizza.get(i) ;
-			
-			if (pizza_by_code.code.contains(codePizza) == true) {
-				test +=1 ;
-				
-			}
-		}
-		
-		if (test !=0) {
-			
-			exist = true ;
-			
-		}
-		
-		return exist ;
-		
-	}
-
+		return false ;
+	} 
 }

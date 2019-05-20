@@ -6,6 +6,6 @@ import fr.pizzeria.model.Pizza;
 
 public abstract class MenuService {
 
-	public abstract void executeUC (PizzaMemoDao pizzaDao) throws PizzaException ;
+	public abstract void executeUC (PizzaJdbcDao pizzaDao) throws PizzaException ;
 	
 }

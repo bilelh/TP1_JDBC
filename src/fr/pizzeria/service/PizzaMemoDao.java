@@ -13,7 +13,7 @@ public class PizzaMemoDao implements IPizzaDao {
 	Scanner questionUser = new Scanner(System.in);
 	
 	public List listPizza = new ArrayList ();
-	
+	/*
 	public void initialisation () {
 		
 		listPizza.add(new Pizza (0 ,"PEP" , "pépéroni" , 12.50 , CategoriePizza.VIANDE)) ;
@@ -25,7 +25,7 @@ public class PizzaMemoDao implements IPizzaDao {
 		listPizza.add(new Pizza (6 ,"ORI" , "L'Orientale" , 13.50 , CategoriePizza.VIANDE)) ;
 		listPizza.add(new Pizza (7 ,"IND" , "L'Indienne" , 14.00 , CategoriePizza.VIANDE)) ; 
 		
-	}
+	}*/
 	
 	
 	public List <Pizza> findAllPizzas() {
