@@ -172,10 +172,12 @@ public class PizzaJdbcDao implements IPizzaDao {
 	}
 	
 	public void deletePizza(String codePizza) {
+		connecter() ;
 		
 		PreparedStatement deletePizzaSt;
 		try {
-			deletePizzaSt = (PreparedStatement) connection.prepareStatement("DELETE FROM pizzas WHERE CODE = ");
+			deletePizzaSt = (PreparedStatement) connection.prepareStatement("DELETE FROM pizzas WHERE CODE = ?");
+			deletePizzaSt.setString(1, codePizza);
 			deletePizzaSt.executeUpdate();
 			
 			deletePizzaSt.close();
@@ -185,32 +187,57 @@ public class PizzaJdbcDao implements IPizzaDao {
 			e.printStackTrace();
 		}
 		
-		
+		deconnecter() ;
 	}
 	
 	public Pizza findPizzaByCode(String codePizza) {
 		
+		connecter() ;
+		
 		Pizza pizza = null ;
+		int id = 0 ;
+		String code = "" ;
+		String libelle = "" ;
+		double prix = 0 ;
+		String categorie = null ;
 		
 		try {
-			PreparedStatement selectPizzaSt = (PreparedStatement) connection.prepareStatement("SELECT * FROM pizzas WHERE CODE = codePizza");
+			PreparedStatement selectPizzaSt = (PreparedStatement) connection.prepareStatement("SELECT * FROM pizzas WHERE CODE = ?");
+			selectPizzaSt.setString(1, codePizza);
 			ResultSet resultats = selectPizzaSt.executeQuery();
 			
-			
-			int id = resultats.getInt("ID");
-			String code = resultats.getString("CODE") ;
-			String libelle = resultats.getString("LIBELLE") ;
-			double prix = resultats.getDouble("PRIX") ;
-
-			//pizza = new Pizza(id, code , libelle , prix );
-			
-			resultats.close();
-			selectPizzaSt.close();
+			while (resultats.next()) {
+				
+				id = resultats.getInt("ID");
+				code = resultats.getString("CODE") ;
+				libelle = resultats.getString("LIBELLE") ;
+				prix = resultats.getDouble("PRIX") ;
+				categorie = resultats.getString("CATEGORIE") ;
+				
+				switch(categorie) {
+				case "Viande":
+					pizza = new Pizza(id, code , libelle , prix , CategoriePizza.VIANDE);
+					break ;
+				case "Poisson":
+					pizza = new Pizza(id, code , libelle , prix , CategoriePizza.POISSON);
+					break ;
+				case "Sans Viande":
+					pizza = new Pizza(id, code , libelle , prix , CategoriePizza.SANS_VIANDE);
+					break ;
+				default:
+					System.out.println("Cette Categorie n'est pas disponible");
+				}
+				
+				resultats.close();
+				selectPizzaSt.close();
+					
+				}
 			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		deconnecter() ;
 		
 		return pizza ;
 		
@@ -219,6 +246,27 @@ public class PizzaJdbcDao implements IPizzaDao {
 	public boolean pizzaExists(String codePizza) {
 		
 		
-		return true ;
+		connecter() ;
+		PreparedStatement selectPizzaSt;
+		try {
+			selectPizzaSt = (PreparedStatement) connection.prepareStatement("SELECT * FROM pizzas WHERE CODE = ?");
+			selectPizzaSt.setString(1, codePizza);
+			ResultSet resultats = selectPizzaSt.executeQuery();
+		
+			if(resultats.next()) {
+				
+				resultats.close();
+				selectPizzaSt.close();
+			
+				deconnecter() ;
+			
+				return true ;
+			}		
+		
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;
 	} 
 }
